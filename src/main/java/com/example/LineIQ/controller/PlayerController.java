@@ -16,9 +16,9 @@ public class PlayerController {
         this.service = service;
     }  
 
-    @GetMapping("/players")
-    public List<Player> getPlayers() {
-        return service.getPlayers();
+    @GetMapping("/player")
+    public String getPlayer() {
+        return service.getPlayer();
     }   
     
 }

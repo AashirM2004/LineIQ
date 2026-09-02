@@ -2,6 +2,9 @@ package com.example.LineIQ.service;
 
 import org.springframework.stereotype.Service;
 
+import com.example.LineIQ.client.NhlApiClient;
+import com.example.LineIQ.model.Player;
+
 @Service
 public class PlayerService {
     private final NhlApiClient client;
@@ -10,8 +13,8 @@ public class PlayerService {
         this.client = client;
     }
     
-    public List<Player> getPlayers() {
-        return client.fetchPlayers();
+    public String getPlayer() {
+        return client.fetchPlayer();
     }
 
 }
