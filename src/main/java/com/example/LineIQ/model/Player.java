@@ -1,35 +1,37 @@
 package com.example.LineIQ.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Player{
 
-    private String firstName;
-    private String lastName;
+    private Long playerId;
+    private Name firstName;
+    private Name lastName;
     private String position;
-    private int goals;
-    private int assists;
-    private int points;
-    private int number;
+    private Integer sweaterNumber;
 
-
-    public Player(String firstName, String lastName, String position, int goals, int assists, int points, int number)
-    {
+    public Player(Long playerId, Name firstName, Name lastName, String position, Integer number) {
+        this.playerId = playerId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.position = position;
-        this.goals = goals;
-        this.assists = assists;
-        this.points = points;
-        this.number = number;
+        this.sweaterNumber = number;
+    }
+
+    public Long getPlayerId()
+    {
+        return playerId;
     }
 
     public String getFirstName()
     {
-        return firstName;
+        return firstName.getDefault();
     }
 
     public String getLastName()
     {
-        return lastName;
+        return lastName.getDefault();
     }
 
     public String getPosition()
@@ -37,34 +39,24 @@ public class Player{
         return position;
     }
 
-    public int getGoals()
+    public Integer getSweaterNumber()
     {
-        return goals;
+        return sweaterNumber;
     }
 
-    public int getAssists()
+    public void setPlayerId(Long playerId)
     {
-        return assists;
-    }
-
-    public int getPoints()
-    {
-        return points;
-    }
-
-    public int getNumber()
-    {
-        return number;
+        this.playerId = playerId;
     }
 
     public void setFirstName(String firstName)
     {
-        this.firstName = firstName;
+        this.firstName.setDefault(firstName);
     }
 
     public void setLastName(String lastName)
     {
-        this.lastName = lastName;
+        this.lastName.setDefault(lastName);;
     }
 
     public void setPosition(String position)
@@ -72,23 +64,8 @@ public class Player{
         this.position = position;
     }
 
-    public void setGoals(int goals)
+    public void setSweaterNumber(Integer number)
     {
-        this.goals = goals;
-    }
-
-    public void setAssists(int assists)
-    {
-        this.assists = assists;
-    }
-
-    public void setPoints(int points)
-    {
-        this.points = points;
-    }
-
-    public void setNumber(int number)
-    {
-        this.number = number;
+        this.sweaterNumber = number;
     }
 }

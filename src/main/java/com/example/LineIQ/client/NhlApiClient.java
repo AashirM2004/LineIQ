@@ -17,11 +17,10 @@ private final String baseUrl = "https://api-web.nhle.com/v1/"; // Probably shoul
                          .build();
     }
 
-    public String fetchPlayer() {
-    return restClient.get()
-            .uri("/player/8477939/landing")
+    public Player fetchPlayer(Long id) {
+        return restClient.get()
+            .uri("/player/" + id + "/landing")
             .retrieve()
-            .body(String.class);
-}
-    
+            .body(Player.class);
+    }     
 }

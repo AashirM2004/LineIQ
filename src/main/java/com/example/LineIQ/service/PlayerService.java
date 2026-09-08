@@ -13,8 +13,8 @@ public class PlayerService {
         this.client = client;
     }
     
-    public String getPlayer() {
-        return client.fetchPlayer();
+    public Player getPlayer(Long id) {
+        return client.fetchPlayer(id);
     }
 
 }

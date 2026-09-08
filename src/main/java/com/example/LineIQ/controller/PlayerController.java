@@ -3,6 +3,7 @@ package com.example.LineIQ.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.LineIQ.model.Player;
@@ -16,9 +17,9 @@ public class PlayerController {
         this.service = service;
     }  
 
-    @GetMapping("/player")
-    public String getPlayer() {
-        return service.getPlayer();
+    @GetMapping("/player/{id}")
+    public Player getPlayer(@PathVariable Long id) {
+        return service.getPlayer(id);
     }   
     
 }
