@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@babel/preset-react": "^8.0.1",
+    "bulma": "^1.0.4",
+    "parcel": "^2.16.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  }
+}

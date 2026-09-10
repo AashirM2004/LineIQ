@@ -1,15 +1,17 @@
 package com.example.LineIQ.controller;
 
-import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 import com.example.LineIQ.model.Player;
 import com.example.LineIQ.service.PlayerService;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 public class PlayerController {
  private final PlayerService service;
 
