@@ -1,6 +1,9 @@
 package com.example.LineIQ.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeParseException;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Player{
@@ -10,13 +13,21 @@ public class Player{
     private Name lastName;
     private String position;
     private Integer sweaterNumber;
+    private String currentTeamAbbrev;
+    private String birthDate;   
+    private String teamLogo;
+    private Integer age;
 
-    public Player(Long playerId, Name firstName, Name lastName, String position, Integer number) {
+    public Player(Long playerId, Name firstName, Name lastName, String position, Integer number, String currentTeamAbbrev, String birthDate, String teamLogo) {
         this.playerId = playerId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.position = position;
         this.sweaterNumber = number;
+        this.currentTeamAbbrev = currentTeamAbbrev;
+        this.birthDate = birthDate;
+        this.teamLogo = teamLogo;
+        this.age = convertBirthDateToAge();
     }
 
     public Long getPlayerId()
@@ -44,6 +55,26 @@ public class Player{
         return sweaterNumber;
     }
 
+    public String getCurrentTeamAbbrev()
+    {
+        return currentTeamAbbrev;
+    }
+
+    public String getBirthDate()
+    {
+        return birthDate;
+    }
+
+    public String getTeamLogo()
+    {
+        return teamLogo;
+    }
+
+    public Integer getAge()
+    {
+        return age;
+    }
+
     public void setPlayerId(Long playerId)
     {
         this.playerId = playerId;
@@ -67,5 +98,42 @@ public class Player{
     public void setSweaterNumber(Integer number)
     {
         this.sweaterNumber = number;
+    }
+
+    public void setCurrentTeamAbbrev(String currentTeamAbbrev)
+    {
+        this.currentTeamAbbrev = currentTeamAbbrev;
+    }
+
+    public void setBirthDate(String birthDate)
+    {
+        this.birthDate = birthDate;
+    }
+
+    public void setTeamLogo(String teamLogo)
+    {
+        this.teamLogo = teamLogo;
+    }
+
+    public void setAge(Integer age)
+    {
+        this.age = age;
+    }
+    
+    public Integer convertBirthDateToAge()
+    {
+        if (birthDate == null || birthDate.isEmpty()) {
+            return null;
+        }
+
+        try {
+            LocalDate birth = LocalDate.parse(birthDate);
+            LocalDate today = LocalDate.now();
+
+            return Period.between(birth, today).getYears();
+
+        } catch (DateTimeParseException e) {
+            return null;
+        }
     }
 }
