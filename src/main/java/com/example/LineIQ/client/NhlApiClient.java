@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.example.LineIQ.model.Player;
 import com.example.LineIQ.model.PlayerSearch;
+import com.example.LineIQ.model.RegularSeason;
+import com.example.LineIQ.dto.NhlPlayerResponse;
 
 @Component
 public class NhlApiClient {
@@ -26,18 +28,31 @@ private final String searchUrl = "https://search.d3.nhle.com/api/v1";
     }
 
     public Player fetchPlayerViaID(Long id) {
-        return restClient.get()
-            .uri("/player/" + id + "/landing")
-            .retrieve()
-            .body(Player.class);
-    }     
+
+    NhlPlayerResponse response = restClient.get()
+        .uri("/player/" + id + "/landing")
+        .retrieve()
+        .body(NhlPlayerResponse.class);
+
+    return new Player(
+        response.getPlayerId(),
+        response.getFirstName(),
+        response.getLastName(),
+        response.getPosition(),
+        response.getSweaterNumber(),
+        response.getCurrentTeamAbbrev(),
+        response.getBirthDate(),
+        response.getTeamLogo(),
+        response.getCareerTotals()
+    );
+}
 
     public List<PlayerSearch> fetchPlayerViaSearch(String name) {
         return searchClient.get()
             .uri(uriBuilder -> uriBuilder
                     .path("/search/player")
                     .queryParam("culture", "en-us")
-                    .queryParam("limit", 20)
+                    .queryParam("limit", 10)
                     .queryParam("q", name)
                     .build())
             .retrieve()

@@ -50,8 +50,11 @@ function PlayerCard({ player }) {
           {player.firstName} {player.lastName}
         </div>
 
-        <div className="player-aav">
-          $Contract AAV
+        <div className="player-stats">
+          GP: {player.careerTotals.regularSeason.gamesPlayed}{" "}
+          G: {player.careerTotals.regularSeason.goals}{" "}
+          A: {player.careerTotals.regularSeason.assists}{" "}
+          P: {player.careerTotals.regularSeason.points}
         </div>
 
         <div className="player-age">

@@ -17,8 +17,9 @@ public class Player{
     private String birthDate;   
     private String teamLogo;
     private Integer age;
+    private CareerTotals careerTotals;
 
-    public Player(Long playerId, Name firstName, Name lastName, String position, Integer number, String currentTeamAbbrev, String birthDate, String teamLogo) {
+    public Player(Long playerId, Name firstName, Name lastName, String position, Integer number, String currentTeamAbbrev, String birthDate, String teamLogo, CareerTotals careerTotals) {
         this.playerId = playerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -28,6 +29,7 @@ public class Player{
         this.birthDate = birthDate;
         this.teamLogo = teamLogo;
         this.age = convertBirthDateToAge();
+        this.careerTotals = careerTotals;
     }
 
     public Long getPlayerId()
@@ -75,6 +77,11 @@ public class Player{
         return age;
     }
 
+    public CareerTotals getCareerTotals()
+    {
+        return careerTotals;
+    }
+
     public void setPlayerId(Long playerId)
     {
         this.playerId = playerId;
@@ -118,6 +125,11 @@ public class Player{
     public void setAge(Integer age)
     {
         this.age = age;
+    }
+    
+    public void setCareerTotals(CareerTotals careerTotals)
+    {
+        this.careerTotals = careerTotals;
     }
     
     public Integer convertBirthDateToAge()
