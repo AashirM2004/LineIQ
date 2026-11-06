@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import PlayerCard from './PlayerCard'
+import PlayerCard from './playerCard'
 
 const positions = ['LW', 'C', 'RW']
 
