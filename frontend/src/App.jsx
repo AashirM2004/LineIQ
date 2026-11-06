@@ -1,180 +1,155 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import 'bulma/css/bulma.min.css';
-import PlayerCard from './playerCard';
+import PlayerCard from './PlayerCard'
+
+const positions = ['LW', 'C', 'RW']
 
 function App() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-
-  // 4 lines, 3 forward positions per line
-  const [lineup, setLineup] = useState([
-    { id: 'LW1', player: null },
-    { id: 'C1', player: null },
-    { id: 'RW1', player: null },
-
-    { id: 'LW2', player: null },
-    { id: 'C2', player: null },
-    { id: 'RW2', player: null },
-
-    { id: 'LW3', player: null },
-    { id: 'C3', player: null },
-    { id: 'RW3', player: null },
-
-    { id: 'LW4', player: null },
-    { id: 'C4', player: null },
-    { id: 'RW4', player: null }
-  ]);
-
-  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const [lineup, setLineup] = useState(
+    [1, 2, 3, 4].flatMap(lineNumber =>
+      positions.map(position => ({ id: `${position}${lineNumber}`, player: null })),
+    ),
+  )
+  const [selectedSlot, setSelectedSlot] = useState(null)
+  const filledSlots = lineup.filter(slot => slot.player).length
 
   useEffect(() => {
-    if (searchQuery.trim() === '') {
-      setSearchResults([]);
-      return;
-    }
+    if (!searchQuery.trim()) return
 
     const timeout = setTimeout(() => {
-      fetch(
-        `http://localhost:8080/player/search/${encodeURIComponent(searchQuery)}`
-      )
+      fetch(`http://localhost:8080/player/search/${encodeURIComponent(searchQuery)}`)
         .then(response => response.json())
-        .then(data => {
-          console.log(data);
-          setSearchResults(data);
-        })
-        .catch(error => {
-          console.error('Error searching for players:', error);
-        });
-    }, 200);
+        .then(setSearchResults)
+        .catch(error => console.error('Error searching for players:', error))
+    }, 200)
 
-    return () => clearTimeout(timeout);
-  }, [searchQuery]);
+    return () => clearTimeout(timeout)
+  }, [searchQuery])
 
   function selectPlayer(player) {
-    if (selectedSlot === null) {
-      return;
-    }
+    if (selectedSlot === null) return
 
     fetch(`http://localhost:8080/player/${player.playerId}`)
       .then(response => response.json())
       .then(data => {
-        console.log(data);
-
-        setLineup(prevLineup =>
-          prevLineup.map(slot =>
-            slot.id === selectedSlot
-              ? { ...slot, player: data }
-              : slot
-          )
-        );
-
-        setSelectedSlot(null);
-        setSearchQuery('');
-        setSearchResults([]);
+        setLineup(current =>
+          current.map(slot => slot.id === selectedSlot ? { ...slot, player: data } : slot),
+        )
+        setSelectedSlot(null)
+        setSearchQuery('')
+        setSearchResults([])
       })
-      .catch(error => {
-        console.error('Error fetching player data:', error);
-      });
+      .catch(error => console.error('Error fetching player data:', error))
   }
 
-  function handleSearchKeyDown(e) {
-    if (e.key === 'Enter' && searchResults.length > 0) {
-      selectPlayer(searchResults[0]);
-    }
+  function handleSearchKeyDown(event) {
+    if (event.key === 'Enter' && searchResults.length > 0) selectPlayer(searchResults[0])
+  }
+
+  function handleSearchChange(event) {
+    const value = event.target.value
+    setSearchQuery(value)
+    if (!value.trim()) setSearchResults([])
   }
 
   return (
-    <>
-      <div className="lineup-container mt-6">
-        <h2 className="title is-3">Search Players</h2>
+    <div className="app-shell">
+      <header className="topbar">
+        <a className="brand" href="/" aria-label="LineIQ home">
+          <span className="brand-mark">LQ</span>
+          <span>Line<span>IQ</span></span>
+        </a>
+        <div className="season-pill"><span className="live-dot" /> 2026 season</div>
+      </header>
 
-        <div className="field">
-          <div className="control">
-            <input
-              className="input"
-              type="text"
-              placeholder={
-                selectedSlot
-                  ? `Select a player for ${selectedSlot}...`
-                  : 'Click a lineup position first...'
-              }
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleSearchKeyDown}
-            />
+      <main className="page-content">
+        <section className="intro">
+          <div>
+            <p className="eyebrow">ROSTER BUILDER <span>•</span> NHL</p>
+            <h1>Build your <em>perfect</em> lines.</h1>
+            <p className="intro-copy">Explore the league, compare careers, and arrange your ideal forward group.</p>
           </div>
-        </div>
-
-        {searchResults.length > 0 && (
-          <div className="box search-results">
-            {searchResults.map((player) => (
-              <button
-                className="button is-dark is-fullwidth has-text-left"
-                key={player.playerId}
-                onClick={() => selectPlayer(player)}
-              >
-                <strong>{player.name}</strong>
-
-                <span className="ml-2">
-                  {player.positionCode} - {player.teamAbbrev}
-                </span>
-              </button>
-            ))}
+          <div className="lineup-progress">
+            <span className="progress-number">{String(filledSlots).padStart(2, '0')}</span>
+            <span className="progress-label">/ 12 spots filled</span>
+            <div className="progress-track"><span style={{ width: `${(filledSlots / 12) * 100}%` }} /></div>
           </div>
-        )}
+        </section>
 
-        <div className="lineup">
-
-          {[1, 2, 3, 4].map(lineNumber => (
-            <div className="line" key={lineNumber}>
-
-              <h3>Line {lineNumber}:</h3>
-
-              <div className="line-slots">
-
-                {['LW', 'C', 'RW'].map(position => {
-                  const slotId = `${position}${lineNumber}`;
-
-                  const slot = lineup.find(
-                    lineupSlot => lineupSlot.id === slotId
-                  );
-
-                  const isSelected = selectedSlot === slotId;
-
-                  return (
-                    <div
-                      key={slotId}
-                      className={`lineup-slot ${isSelected ? 'selected-slot' : ''
-                        }`}
-                      onClick={() => setSelectedSlot(slotId)}
-                    >
-
-                      {slot.player ? (
-                        <PlayerCard player={slot.player} />
-                      ) : (
-                        <div className="empty-slot">
-                          {slotId}
-                        </div>
-                      )}
-
-                    </div>
-                  );
-                })}
-
+        <section className="workspace">
+          <div className="search-panel">
+            <div className="panel-heading">
+              <span className="panel-icon">+</span>
+              <div>
+                <h2>Add a player</h2>
+                <p>{selectedSlot ? `Adding to ${selectedSlot}` : 'Select a position below to get started'}</p>
               </div>
             </div>
-          ))}
+            <div className="search-wrap">
+              <span className="search-icon">⌕</span>
+              <input
+                className="player-search"
+                type="text"
+                placeholder={selectedSlot ? `Search players for ${selectedSlot}...` : 'Click a position first...'}
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onKeyDown={handleSearchKeyDown}
+              />
+            </div>
+            {!selectedSlot && <p className="helper-text">Tip: click any open position on the right.</p>}
+          </div>
 
-        </div>
+          {searchResults.length > 0 && (
+            <div className="search-results">
+              <p className="results-label">PLAYER RESULTS</p>
+              {searchResults.map(player => (
+                <button className="result-row" key={player.playerId} onClick={() => selectPlayer(player)}>
+                  <span className="result-avatar">{player.name?.charAt(0)}</span>
+                  <span className="result-name"><strong>{player.name}</strong><small>{player.positionCode} · {player.teamAbbrev}</small></span>
+                  <span className="result-arrow">↗</span>
+                </button>
+              ))}
+            </div>
+          )}
 
-      </div>
-
-      <div className="footer">
-        <p>© 2026 LineIQ. All rights reserved.</p>
-      </div>
-    </>
+          <div className="lineup-section">
+            <div className="section-heading">
+              <div><p className="eyebrow">YOUR ROSTER</p><h2>Forward lines</h2></div>
+              <span className="line-count">4 LINES <span>•</span> 12 POSITIONS</span>
+            </div>
+            <div className="lineup">
+              {[1, 2, 3, 4].map(lineNumber => (
+                <div className="line" key={lineNumber}>
+                  <div className="line-label"><span>0{lineNumber}</span><strong>LINE {lineNumber}</strong></div>
+                  <div className="line-slots">
+                    {positions.map(position => {
+                      const slotId = `${position}${lineNumber}`
+                      const slot = lineup.find(lineupSlot => lineupSlot.id === slotId)
+                      const isSelected = selectedSlot === slotId
+                      return (
+                        <div key={slotId} className={`lineup-slot ${isSelected ? 'selected-slot' : ''}`} onClick={() => setSelectedSlot(slotId)}>
+                          {slot.player ? <PlayerCard player={slot.player} /> : (
+                            <div className="empty-slot">
+                              <span className="slot-plus">+</span>
+                              <span>{position === 'C' ? 'CENTER' : position === 'LW' ? 'LEFT WING' : 'RIGHT WING'}</span>
+                              <small>{slotId}</small>
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer><span>LINEIQ</span> · Build smarter lines</footer>
+    </div>
   )
 }
 
-export default App;
+export default App
