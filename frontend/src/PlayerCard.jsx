@@ -35,6 +35,20 @@ const teamColors = {
   WPG: "#041E42"
 };
 
+
+function getDisplayPosition(player) {
+  if (player.position === "D") {
+    if (player.shootsCatches === "L") return "LD";
+    if (player.shootsCatches === "R") return "RD";
+    return "D";
+  }
+
+  if (player.position === "L") return "LW";
+  if (player.position === "R") return "RW";
+
+  return player.position;
+}
+
 function PlayerCard({ player }) {
   const teamColor =
     teamColors[player.currentTeamAbbrev] || "#64748b";
@@ -75,11 +89,7 @@ function PlayerCard({ player }) {
 
           <div className="player-badges">
             <span className="player-position">
-              {player.position === "L"
-                ? "LW"
-                : player.position === "R"
-                  ? "RW"
-                  : player.position}
+              {getDisplayPosition(player)}
             </span>
             <span className="player-age">
               Age {player.age ?? "—"}
