@@ -28,6 +28,8 @@ public class NhlPlayerResponse {
 
     private RegularSeason regularSeason;
 
+    private String headshot;
+
     public Long getPlayerId() {
         return playerId;
     }
@@ -66,5 +68,10 @@ public class NhlPlayerResponse {
 
     public RegularSeason getRegularSeason() {
         return regularSeason;
+    }
+
+    public String getHeadshot()
+    {
+        return headshot;
     }
 }

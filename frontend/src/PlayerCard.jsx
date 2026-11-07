@@ -1,3 +1,5 @@
+
+
 const teamColors = {
   ANA: "#F47A38",
   BOS: "#FFB81C",
@@ -34,44 +36,89 @@ const teamColors = {
 };
 
 function PlayerCard({ player }) {
-    const teamColor = teamColors[player.currentTeamAbbrev];
+  const teamColor =
+    teamColors[player.currentTeamAbbrev] || "#64748b";
+
+  const stats = player.careerTotals?.regularSeason ?? player;
+
+  const playerStats = [
+    { label: "GP", value: stats.gamesPlayed },
+    { label: "G", value: stats.goals },
+    { label: "A", value: stats.assists },
+    { label: "PTS", value: stats.points }
+  ];
+
   return (
-        <div
+    <div
       className="player-card"
-      style={{ backgroundColor: teamColor }}
+      style={{ "--team-color": teamColor }}
     >
-  
-      <div className="player-number">
-            #{player.sweaterNumber}
-      </div>
+      <div className="player-card-content">
 
-      <div className="player-info">
-        <div className="player-name">
-          {player.firstName} {player.lastName}
+        <div className="player-headshot">
+          {player.headshot && (
+            <img
+              src={player.headshot}
+              alt={`${player.firstName} ${player.lastName}`}
+            />
+          )}
         </div>
 
-        <div className="player-stats">
-          GP: {player.careerTotals.regularSeason.gamesPlayed}{" "}
-          G: {player.careerTotals.regularSeason.goals}{" "}
-          A: {player.careerTotals.regularSeason.assists}{" "}
-          P: {player.careerTotals.regularSeason.points}
+        <div className="player-info">
+          <span className="player-first-name">
+            {player.firstName}
+          </span>
+
+          <span className="player-last-name">
+            {player.lastName}
+          </span>
+
+          <div className="player-badges">
+            <span className="player-position">
+              {player.position === "L"
+                ? "LW"
+                : player.position === "R"
+                  ? "RW"
+                  : player.position}
+            </span>
+            <span className="player-age">
+              Age {player.age ?? "—"}
+            </span>
+          </div>
         </div>
 
-        <div className="player-age">
-          Age: {player.age}
+        <div className="player-branding">
+          {player.teamLogo && (
+            <img
+              className="team-logo-image"
+              src={player.teamLogo}
+              alt={player.currentTeamAbbrev}
+            />
+          )}
+
+          <span className="player-number">
+            #{player.sweaterNumber ?? "—"}
+          </span>
         </div>
+
       </div>
 
-      <div className="player-position">
-        {player.position}
-      </div>
+      <div className="player-stats">
+        {playerStats.map(stat => (
+          <div
+            key={stat.label}
+            className={`player-stat ${stat.label === "PTS" ? "points-stat" : ""
+              }`}
+          >
+            <span className="stat-label">
+              {stat.label}
+            </span>
 
-      <div className="team-abbrev">
-        {player.currentTeamAbbrev}
-      </div>
-
-      <div className="team-logo">
-        <img src={player.teamLogo} alt="Team Logo" />
+            <span className="stat-value">
+              {stat.value ?? "—"}
+            </span>
+          </div>
+        ))}
       </div>
 
     </div>

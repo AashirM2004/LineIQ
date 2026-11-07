@@ -43,7 +43,8 @@ private final String searchUrl = "https://search.d3.nhle.com/api/v1";
         response.getCurrentTeamAbbrev(),
         response.getBirthDate(),
         response.getTeamLogo(),
-        response.getCareerTotals()
+        response.getCareerTotals(),
+        response.getHeadshot()
     );
 }
 
