@@ -2,18 +2,59 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import PlayerCard from './playerCard'
 
-const positions = ['LW', 'C', 'RW']
+const forwardPositions = ['LW', 'C', 'RW']
+const defencePositions = ['LD', 'RD']
+
+const rosterConfig = {
+  forwards: {
+    title: 'Forward Lines',
+    count: 4,
+    positions: forwardPositions,
+    label: 'LINE',
+    total: 12,
+  },
+  defence: {
+    title: 'Defence Pairings',
+    count: 3,
+    positions: defencePositions,
+    label: 'PAIRING',
+    total: 6,
+  }
+}
+
+const positonalLabels = {
+  LW: 'LEFT WING',
+  RW: 'RIGHT WING',
+  C: 'CENTER',
+  LD: 'LEFT DEFENCE',
+  RD: 'RIGHT DEFENCE',
+}
+
+function createLineup(count, positions) {
+  return Array.from({ length: count }, (_, index) =>
+    positions.map(position => ({
+      id: `${position}${index + 1}`,
+      player: null,
+    })),
+  ).flat()
+}
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
-  const [lineup, setLineup] = useState(
-    [1, 2, 3, 4].flatMap(lineNumber =>
-      positions.map(position => ({ id: `${position}${lineNumber}`, player: null })),
-    ),
-  )
+  const [activeView, setActiveView] = useState('forwards')
+  const [lineup, setLineup] = useState([
+    ...createLineup(4, forwardPositions),
+    ...createLineup(3, defencePositions)
+  ])
   const [selectedSlot, setSelectedSlot] = useState(null)
-  const filledSlots = lineup.filter(slot => slot.player).length
+
+  const config = rosterConfig[activeView]
+
+  const activeLineup = lineup.filter(slot => config.positions.some(
+    position => slot.id.startsWith(position) && slot.id.slice(position.length).match(/^\d+$/)
+  ))
+  const filledSlots = activeLineup.filter(slot => slot.player).length
 
   useEffect(() => {
     if (!searchQuery.trim()) return
@@ -28,6 +69,13 @@ function App() {
     return () => clearTimeout(timeout)
   }, [searchQuery])
 
+  function changeView(view) {
+    setActiveView(view)
+    setSelectedSlot(null)
+    setSearchQuery('')
+    setSearchResults([])
+  }
+
   function selectPlayer(player) {
     if (selectedSlot === null) return
 
@@ -35,7 +83,10 @@ function App() {
       .then(response => response.json())
       .then(data => {
         setLineup(current =>
-          current.map(slot => slot.id === selectedSlot ? { ...slot, player: data } : slot),
+          current.map(slot =>
+            slot.id === selectedSlot
+              ? { ...slot, player: data }
+              : slot),
         )
         setSelectedSlot(null)
         setSearchQuery('')
@@ -61,7 +112,9 @@ function App() {
           <span className="brand-mark">LQ</span>
           <span>Line<span>IQ</span></span>
         </a>
-        <div className="season-pill"><span className="live-dot" /> 2026 season</div>
+        <div className="season-pill">
+          <span className="live-dot" /> 2026 season
+        </div>
       </header>
 
       <main className="page-content">
@@ -73,8 +126,8 @@ function App() {
           </div>
           <div className="lineup-progress">
             <span className="progress-number">{String(filledSlots).padStart(2, '0')}</span>
-            <span className="progress-label">/ 12 spots filled</span>
-            <div className="progress-track"><span style={{ width: `${(filledSlots / 12) * 100}%` }} /></div>
+            <span className="progress-label">/ {config.total} spots filled</span>
+            <div className="progress-track"><span style={{ width: `${(filledSlots / config.total) * 100}%` }} /></div>
           </div>
         </section>
 
@@ -89,6 +142,7 @@ function App() {
             </div>
             <div className="search-wrap">
               <span className="search-icon">⌕</span>
+
               <input
                 className="player-search"
                 type="text"
@@ -114,26 +168,79 @@ function App() {
             </div>
           )}
 
+          <nav className="roster-nav" aria-label="Roster Navigation">
+            <button
+              type="button"
+              className={`roster-nav-item ${activeView === 'forwards' ? 'active' : ''
+                }`}
+              onClick={() => changeView('forwards')}
+              aria-current={activeView === 'forwards' ? 'page' : undefined}
+            >
+              Forward Lines
+            </button>
+
+            <button
+              type="button"
+              className={`roster-nav-item ${activeView === 'defence' ? 'active' : ''
+                }`}
+              onClick={() => changeView('defence')}
+              aria-current={activeView === 'defence' ? 'page' : undefined}
+            >
+              Defence Pairings
+            </button>
+          </nav>
+
           <div className="lineup-section">
             <div className="section-heading">
-              <div><p className="eyebrow">YOUR ROSTER</p><h2>Forward lines</h2></div>
-              <span className="line-count">4 LINES <span>•</span> 12 POSITIONS</span>
+              <div><p className="eyebrow">YOUR ROSTER</p><h2>{config.title}</h2></div>
+
+              <span className="line-count">
+                {config.count} {activeView === 'forwards' ? 'LINES' : 'PAIRINGS'}
+                <span> • </span>
+                {config.total} POSITIONS
+              </span>
             </div>
             <div className="lineup">
-              {[1, 2, 3, 4].map(lineNumber => (
-                <div className="line" key={lineNumber}>
-                  <div className="line-label"><span>0{lineNumber}</span><strong>LINE {lineNumber}</strong></div>
-                  <div className="line-slots">
-                    {positions.map(position => {
+              {Array.from(
+                { length: config.count },
+                (_, index) => index + 1,
+              ).map(lineNumber => (
+                <div className="line" key={`${activeView}-${lineNumber}`}>
+                  <div className="line-label">
+                    <span>0{lineNumber}</span>
+                    <strong>
+                      {config.label} {lineNumber}
+                    </strong>
+                  </div>
+
+                  <div
+                    className={`line-slots ${activeView === 'defence' ? 'defence-slots' : ''
+                      }`}
+                  >
+                    {config.positions.map(position => {
                       const slotId = `${position}${lineNumber}`
-                      const slot = lineup.find(lineupSlot => lineupSlot.id === slotId)
+
+                      const slot = lineup.find(
+                        lineupSlot => lineupSlot.id === slotId,
+                      )
+
                       const isSelected = selectedSlot === slotId
+
                       return (
-                        <div key={slotId} className={`lineup-slot ${isSelected ? 'selected-slot' : ''}`} onClick={() => setSelectedSlot(slotId)}>
-                          {slot.player ? <PlayerCard player={slot.player} /> : (
+                        <div
+                          key={slotId}
+                          className={`lineup-slot ${isSelected ? 'selected-slot' : ''
+                            }`}
+                          onClick={() => setSelectedSlot(slotId)}
+                        >
+                          {slot.player ? (
+                            <PlayerCard
+                              player={slot.player}
+                            />
+                          ) : (
                             <div className="empty-slot">
                               <span className="slot-plus">+</span>
-                              <span>{position === 'C' ? 'CENTER' : position === 'LW' ? 'LEFT WING' : 'RIGHT WING'}</span>
+                              <span>{positonalLabels[position]}</span>
                               <small>{slotId}</small>
                             </div>
                           )}
@@ -147,7 +254,10 @@ function App() {
           </div>
         </section>
       </main>
-      <footer><span>LINEIQ</span> · Build smarter lines</footer>
+
+      <footer>
+        <span>LINEIQ</span> · Build smarter lines
+      </footer>
     </div>
   )
 }

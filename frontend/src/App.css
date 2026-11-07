@@ -1209,3 +1209,69 @@ footer span {
     font-size: 20px;
   }
 }
+
+
+/* =========================================
+   ROSTER NAVIGATION
+   ========================================= */
+
+.roster-nav {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  border-bottom: 1px solid #273440;
+  margin: 12px 0 28px;
+}
+
+.roster-nav-item {
+  position: relative;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 16px 24px;
+  color: #8999a8;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.roster-nav-item:hover {
+  color: #ffffff;
+}
+
+.roster-nav-item.active {
+  color: #ffffff;
+  border-bottom-color: #4da4ff;
+}
+
+.roster-nav-item:focus-visible {
+  outline: 2px solid #4da4ff;
+  outline-offset: -4px;
+}
+
+/* =========================================
+   DEFENCE PAIRINGS
+   ========================================= */
+
+.line-slots.defence-slots {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Keep defence player cards from stretching
+   too wide on larger screens */
+
+.defence-slots .lineup-slot {
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .roster-nav-item {
+    flex: 1;
+    padding: 14px 10px;
+    font-size: 13px;
+    text-align: center;
+  }
+}

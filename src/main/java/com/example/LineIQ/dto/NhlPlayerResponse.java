@@ -30,6 +30,8 @@ public class NhlPlayerResponse {
 
     private String headshot;
 
+    private String shootsCatches;
+
     public Long getPlayerId() {
         return playerId;
     }
@@ -73,5 +75,10 @@ public class NhlPlayerResponse {
     public String getHeadshot()
     {
         return headshot;
+    }
+
+    public String getShootsCatches()
+    {
+        return shootsCatches;
     }
 }

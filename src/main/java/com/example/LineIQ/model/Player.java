@@ -19,8 +19,9 @@ public class Player{
     private Integer age;
     private CareerTotals careerTotals;
     private String headshot;
+    private String shootsCatches;
 
-    public Player(Long playerId, Name firstName, Name lastName, String position, Integer number, String currentTeamAbbrev, String birthDate, String teamLogo, CareerTotals careerTotals, String headshot) {
+    public Player(Long playerId, Name firstName, Name lastName, String position, Integer number, String currentTeamAbbrev, String birthDate, String teamLogo, CareerTotals careerTotals, String headshot, String shootsCatches) {
         this.playerId = playerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -32,6 +33,7 @@ public class Player{
         this.age = convertBirthDateToAge();
         this.careerTotals = careerTotals;
         this.headshot = headshot;
+        this.shootsCatches = shootsCatches;
     }
 
     public Long getPlayerId()
@@ -89,6 +91,12 @@ public class Player{
         return headshot;
     }
 
+    public String getShootsCatches()
+    {
+        return shootsCatches;
+    }
+
+
     public void setPlayerId(Long playerId)
     {
         this.playerId = playerId;
@@ -144,7 +152,12 @@ public class Player{
     {
         this.headshot = headshot;
     }
-    
+
+    public void setShootsCatches(String shootsCatches)
+    {
+        this.shootsCatches = shootsCatches;
+    }
+
     public Integer convertBirthDateToAge()
     {
         if (birthDate == null || birthDate.isEmpty()) {
