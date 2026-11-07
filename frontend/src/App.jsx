@@ -122,7 +122,7 @@ function App() {
           <div>
             <p className="eyebrow">ROSTER BUILDER <span>•</span> NHL</p>
             <h1>Build your <em>perfect</em> lines.</h1>
-            <p className="intro-copy">Explore the league, compare careers, and arrange your ideal forward group.</p>
+            <p className="intro-copy">Explore the league, compare careers, and arrange your ideal lineup.</p>
           </div>
           <div className="lineup-progress">
             <span className="progress-number">{String(filledSlots).padStart(2, '0')}</span>
